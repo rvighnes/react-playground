@@ -1,17 +1,14 @@
+import classNames from "classnames";
 import React from "react";
+import styled from "styled-components";
 
-const defaultStyles: React.CSSProperties = {
-  display: 'inline-block',
-};
+import TimelineContext from "../common/context/TimelineContext";
 
-export interface TimelineConnectorProps {
-  testId?: string;
+const StyledTimelineConnector = styled.div`
+  flex-shrink: 0;
+`;
 
-  /**
-  * Should the connector line be shown in the UI
-  */
-  show?: boolean;
-
+export interface TimelineConnectorProps extends React.HTMLProps<HTMLDivElement> {
   /**
   * Length of the connector line
   */
@@ -31,54 +28,60 @@ export interface TimelineConnectorProps {
   * Thickness of the connector line
   */
   thickness?: string | number;
-
-  /**
-   * If the connector line should be horizontal or vertical
-   */
-  direction?: 'horizontal' | 'vertical';
 }
 
 /**
  * TimelineConnector component is used as a line-separator between different events in
  * the Timeline component
  */
-const TimelineConnector: React.FC<TimelineConnectorProps> = (props) => {
-  const borderWidth = typeof props.thickness === "number" ? `${props.thickness}px` : props.thickness;
-  const border = `${borderWidth} ${props.type} ${props.color}`;
+const TimelineConnector = React.forwardRef<HTMLDivElement, TimelineConnectorProps>((props, ref) => {
+  const {
+    className,
+    style: elStyle,
+    length,
+    color,
+    type,
+    thickness,
+    ref: _,
+    as: __,   // Conflicts with the HTML element,
+    ...others
+  } = props;
+  const parent = React.useContext(TimelineContext);
 
-  const styles: React.CSSProperties = {
-    width: 0,
-    height: 0,
-  };
+  const derivedStyles: React.CSSProperties = {
+    borderWidth: 0,
+    border: `${type} ${color}`,
 
-  if (props.direction === 'horizontal') {
-    styles.width = props.length;
-    styles.borderTop = border;
-  } else {
-    styles.height = props.length;
-    styles.borderLeft = border;
-  }
+    // Need to use the following instead of flex-basis because
+    // it overflows the container with flex-basis.
+    width: parent.direction === 'horizontal' ? props.length : 0,
+    height: parent.direction === 'vertical' ? props.length : 0,
 
-  const derievedStyles: React.CSSProperties = {
-    opacity: props.show ? 1 : 0,
+    borderTopWidth: parent.direction === 'horizontal' ? thickness : 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: parent.direction === 'vertical' ? thickness : 0,
+    borderRightWidth: 0,
   };
 
   return (
-    <div
-      className="timeline-event__separator-connector"
-      style={Object.assign({}, defaultStyles, derievedStyles, styles)}
-      data-testid={`test-${props.testId || 'connector'}`}
+    <StyledTimelineConnector
+      data-testid={`test-${props.id || 'connector'}`}
+      className={classNames([
+        "timeline-event__separator-connector",
+        className || '',
+      ])}
+      style={Object.assign({}, derivedStyles, elStyle)}
+      ref={ref}
+      {...others}
     />
   );
-};
+});
 
 export default TimelineConnector;
 
 TimelineConnector.defaultProps = {
-  show: true,
   length: 70,
   color: 'hsl(0, 0%, 70%)',
-  type: 'solid',
+  type: 'solid' as 'solid',
   thickness: 2,
-  direction: 'vertical',
 };

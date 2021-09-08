@@ -2,103 +2,106 @@ import React from "react";
 import styled from "styled-components";
 import classNames from "classnames";
 
-import { Align, AlignDirection, Separator } from "./common/types";
-import { getMergedSeparator, getEventAlignDirection } from "./common/util";
-import TimelineEvent, { TimelineEventProps } from "./TimelineEvent";
+import { PlacementWithAlternate, Placement, Direction } from "./common/types";
+
+import TimelineContext, { TimelineContextProps } from "./common/context/TimelineContext";
 
 const StyledTimeline = styled.ul`
   padding-inline-start: 0;
+  display: flex;
 
-  &.timeline-horizontal {
-    display: flex;
-  }
+  /* Can be overridden by setting the "eventGap" prop */
+  gap: 10px;
+
+  font-family: 'Roboto', sans-serif;
+
+  &.timeline-horizontal {flex-direction: row;}
+  &.timeline-vertical {flex-direction: column;}
 `;
-
-export interface TimelineProps {
-  id: string;
-
+export interface TimelineProps extends React.HTMLProps<HTMLUListElement> {
   /**
    * The position where the timeline's content should appear.
    */
-  align?: Align;
+  placement?: PlacementWithAlternate;
 
   /**
-   * From which side the alternate alignment begin from. Considered only if "align" is "alternate".
+   * From which side the alternate placement should begin from.
+   * Considered only if "placement" is "alternate".
    */
-  alignStart?: AlignDirection;
+  placementStart?: Placement;
 
   /**
    * Whether the timeline should be presented horizontally or vertically
    */
-  direction?: 'horizontal' | 'vertical';
+  direction?: Direction;
 
   /**
-   * Item separator configuration for all items.
+   * Sets the gap between consecutive events
    */
-  separator?: Separator;
+  eventGap?: React.CSSProperties['gap'];
 
   /**
-   * Array of events - REQUIRED
+   * If opposite content is not there, then its space will shrunk to 0.
    */
-  events: TimelineEventProps[];
-
-  /**
-   * Content flex value for all the events
-   */
-  contentFlexValue?: React.CSSProperties['flex'];
-
-  /**
-  * Opposite content flex value for all the events.
-  */
-  oppositeContentFlexValue?: React.CSSProperties['flex'];
-
-  /**
-   * Click handler for events
-   */
-  clickHandler?: (id: string) => void;
+  showOnlyOneSide?: boolean;
 }
 
 /**
  * The timeline displays a list of events in chronological order.
  *
- * @param props {TimelineProps}
+ * @param props {React.PropsWithChildren<TimelineProps>}
  * @returns {JSX.Element}
  */
-const Timeline: React.FC<TimelineProps> = (props): JSX.Element => {
-  const isHorizontal = props.direction === "horizontal";
+const Timeline = React.forwardRef<HTMLUListElement, TimelineProps>((props, ref): JSX.Element => {
+  const {
+    direction,
+    placement,
+    placementStart,
+    showOnlyOneSide,
+    className,
+    eventGap,
+    style = {},
+    ref: _,
+    children,
+    as: __,   // Conflicts with the HTML element,
+    ...others
+  } = props;
+
+  const timelineContextValue = React.useMemo<TimelineContextProps>(() => ({
+    placement,
+    placementStart,
+    direction,
+    showOnlyOneSide,
+  }), [placement, placementStart, direction, showOnlyOneSide]);
+
+  const derivedStyles: React.CSSProperties = {
+    gap: eventGap,
+  };
 
   return (
-    <StyledTimeline
-      data-testid={`test-${props.id}`}
-      className={classNames([
-        "timeline",
-        { "timeline-horizontal": isHorizontal }
-      ])}
-    >
-      {props.events.map((timelineEvent: TimelineEventProps, index: number) => (
-        <TimelineEvent
-          key={timelineEvent.id}
-          direction={props.direction}
-          {...timelineEvent}
-          alignSelf={timelineEvent.alignSelf || getEventAlignDirection({
-            index,
-            align: props.align as Align,
-            alignStart: props.alignStart,
-          })}
-          separator={getMergedSeparator(props.separator, timelineEvent.separator)}
-          contentFlexValue={timelineEvent.contentFlexValue || props.contentFlexValue}
-          oppositeContentFlexValue={timelineEvent.oppositeContentFlexValue || props.oppositeContentFlexValue}
-          clickHandler={timelineEvent.clickHandler || props.clickHandler}
-        />
-      ))}
-    </StyledTimeline>
+    <TimelineContext.Provider value={timelineContextValue}>
+      <StyledTimeline
+        data-testid={`test-${others.id || 'timeline'}`}
+        className={classNames([
+          "timeline",
+          `timeline-${direction}`,
+          className || '',
+        ])}
+        style={Object.assign({}, derivedStyles, style)}
+        ref={ref}
+        {...others}
+      >
+        {props.children}
+      </StyledTimeline>
+    </TimelineContext.Provider>
   );
-};
+});
 
 export default Timeline;
 
 Timeline.defaultProps = {
-  align: 'after',
-  alignStart: 'after',
-  direction: 'vertical',
+  placement: 'after' as PlacementWithAlternate,
+  placementStart: 'after' as Placement,
+  direction: 'vertical' as Direction,
+  showOnlyOneSide: false,
 };

@@ -2,148 +2,127 @@ import React from "react";
 
 import { render, screen, cleanup } from "@testing-library/react";
 
-import TimelineEvent from "./TimelineEvent";
+import TimelineEvent, { TimelineEventProps } from "./TimelineEvent";
 
-import { Direction, AlignDirection } from "../common/types";
+import TimelineContext, { TimelineContextProps } from "../common/context/TimelineContext";
 
 describe('TimelineEvent tests', () => {
   const id = "my-timeline-event";
 
   beforeEach(cleanup);
 
-  it('should render the TimelineEvent component on the screen', () => {
-    render(<TimelineEvent id={id} content={''} />);
+  const customRenderAndGet = (props: any, contextValue: any = {}) => {
+    render(
+      <TimelineContext.Provider value={contextValue}>
+        <TimelineEvent
+          index={0}
+          {...props}
+          id={id}
+        />
+      </TimelineContext.Provider>
+    );
 
-    const el = screen.queryByTestId(`test-${id}`);
+    return screen.getByTestId(`test-${id}`);
+  };
+
+  it('should render the TimelineEvent component on the screen', () => {
+    const el = customRenderAndGet({
+      index: 0,
+    } as TimelineEventProps);
     expect(el).not.toBeNull();
   });
 
-  describe('Root element conditional flex styles', () => {
-    const customRenderAndGet = (direction: Direction, alignSelf: AlignDirection): HTMLElement => {
-      render(
-        <TimelineEvent
-          id={id}
-          content={''}
-          direction={direction}
-          alignSelf={alignSelf}
-        />
-      );
-      return screen.getByTestId(`test-${id}`);
-    };
+  it('should have the "timeline-event" className', () => {
+    const el = customRenderAndGet({
+      index: 0,
+    } as TimelineEventProps);
+    expect(el).toHaveClass("timeline-event");
+  });
 
-    it('should set "flexDirection" as "row-reverse" if "alignSelf" is "after" and "direction" is "vertical"', () => {
-      const el = customRenderAndGet("vertical", "after");
-      expect(el).toHaveStyle('flex-direction: row-reverse');
+  describe('Root element conditional classes based on "placement" and "direction"', () => {
+    it('should have ".horizontal.after" classes if "placement" is "after" and "direction" is "horizontal"', () => {
+      const el = customRenderAndGet({
+        index: 0,
+        placement: "after",
+      } as TimelineEventProps, {
+        direction: "horizontal",
+      } as TimelineContextProps);
+      expect(el).toHaveClass('horizontal');
+      expect(el).toHaveClass('after');
     });
 
-    it('should set "flexDirection" as "column-reverse" if "alignSelf" is "after" and "direction" is "horizontal"', () => {
-      const el = customRenderAndGet("horizontal", "after");
-      expect(el).toHaveStyle('flex-direction: column-reverse');
+    it('should have ".horizontal.before" classes if "placement" is "before" and "direction" is "horizontal"', () => {
+      const el = customRenderAndGet({
+        index: 0,
+        placement: "before",
+      } as TimelineEventProps, {
+        direction: "horizontal",
+      } as TimelineContextProps);
+      expect(el).toHaveClass('horizontal');
+      expect(el).toHaveClass('before');
     });
 
-    it('should set "flexDirection" as "row" if "alignSelf" is "before" and "direction" is "vertical"', () => {
-      const el = customRenderAndGet("vertical", "before");
-      expect(el).toHaveStyle('flex-direction: row');
+    it('should have ".vertical.after" classes if "placement" is "after" and "direction" is "vertical"', () => {
+      const el = customRenderAndGet({
+        index: 0,
+        placement: "after",
+      } as TimelineEventProps, {
+        direction: "vertical",
+      } as TimelineContextProps);
+      expect(el).toHaveClass('vertical');
+      expect(el).toHaveClass('after');
     });
 
-    it('should set "flexDirection" as "column" if "alignSelf" is "before" and "direction" is "horizontal"', () => {
-      const el = customRenderAndGet("horizontal", "before");
-      expect(el).toHaveStyle('flex-direction: column');
+    it('should have ".vertical.before" classes if "placement" is "before" and "direction" is "vertical"', () => {
+      const el = customRenderAndGet({
+        index: 0,
+        placement: "before",
+      } as TimelineEventProps, {
+        direction: "vertical",
+      } as TimelineContextProps);
+      expect(el).toHaveClass('vertical');
+      expect(el).toHaveClass('before');
     });
   });
 
   describe('Root element content-separator gap', () => {
-    const customRenderAndGet = (contentGap?: string | number): HTMLElement => {
-      render(
-        <TimelineEvent
-          id={id}
-          content={''}
-          separator={{
-            gaps: { content: contentGap }
-          }}
-        />
-      );
-      return screen.getByTestId(`test-${id}`);
-    };
-
     it('should have the default "gap" if not provided', () => {
-      const el = customRenderAndGet();
+      const el = customRenderAndGet({});
       expect(el).toHaveStyle('gap: 15px');
     });
 
     it('should have the "0" as "gap" value if "0" is provided', () => {
-      const el = customRenderAndGet(0);
+      const el = customRenderAndGet({ separatorContentGap: 0 } as TimelineEventProps);
       expect(el).toHaveStyle('gap: 0');
     });
 
     it('should have the provided-numeric value as "gap" value if is provided', () => {
-      const el = customRenderAndGet(10);
-      expect(el).toHaveStyle('gap: 10px');
+      const el = customRenderAndGet({ separatorContentGap: 40 } as TimelineEventProps);
+      expect(el).toHaveStyle('gap: 40px');
     });
 
     it('should have the provided-string value as "gap" value if is provided', () => {
-      const el = customRenderAndGet("22px");
-      expect(el).toHaveStyle('gap: 22px');
-    });
-  });
-
-  describe('Separator element tests', () => {
-    describe('conditional classes', () => {
-      const customRenderAndGet = (direction: Direction): HTMLElement => {
-        render(
-          <TimelineEvent
-            id={id}
-            content={''}
-            direction={direction}
-          />
-        );
-        return screen.getByTestId(`test-${id}`).querySelector('.timeline-event__separator') as HTMLElement;
-      };
-
-      it('should have the "timeline-event__separator--vertical" if the "direction" is "vertical"', () => {
-        const el = customRenderAndGet("vertical");
-        expect(el).toHaveClass('timeline-event__separator--vertical');
-      });
-
-      it('should not have the "timeline-event__separator--vertical" if the "direction" is "horizontal"', () => {
-        const el = customRenderAndGet("horizontal");
-        expect(el).not.toHaveClass('timeline-event__separator--vertical');
-      });
+      const el = customRenderAndGet({ separatorContentGap: "42px" } as TimelineEventProps);
+      expect(el).toHaveStyle('gap: 42px');
     });
 
-    describe('separator gap', () => {
-      const customRenderAndGet = (dotAndConnectorGap?: string | number): HTMLElement => {
-        render(
-          <TimelineEvent
-            id={id}
-            content={''}
-            separator={{
-              gaps: { dotAndConnector: dotAndConnectorGap }
-            }}
-          />
-        );
-        return screen.getByTestId(`test-${id}`).querySelector('.timeline-event__separator') as HTMLElement;
-      };
-
-      it('should have the default "gap" if not provided', () => {
-        const el = customRenderAndGet();
-        expect(el).toHaveStyle('gap: 5px');
+    it('should override the default gap value if provided in styles', () => {
+      const el = customRenderAndGet({
+        style: {
+          gap: 15,
+        },
       });
+      expect(el).toHaveStyle('gap: 15px');
+    });
 
-      it('should have the "0" as "gap" value if "0" is provided', () => {
-        const el = customRenderAndGet(0);
-        expect(el).toHaveStyle('gap: 0');
+    it('should make sure that gap value in styles take more precedence than the gap value as prop.', () => {
+      const el = customRenderAndGet({
+        gap: 41,
+        style: {
+          gap: 42,
+        },
       });
-
-      it('should have the provided-numeric value as "gap" value if is provided', () => {
-        const el = customRenderAndGet(10);
-        expect(el).toHaveStyle('gap: 10px');
-      });
-
-      it('should have the provided-string value as "gap" value if is provided', () => {
-        const el = customRenderAndGet("22px");
-        expect(el).toHaveStyle('gap: 22px');
-      });
+      expect(el).toHaveStyle('gap: 42px');
     });
   });
 });

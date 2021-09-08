@@ -4,6 +4,12 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import TimelineEvent, { TimelineEventProps } from './TimelineEvent';
 
 import { IoFastFoodSharp } from "react-icons/io5";
+import TimelineContent from '../TimelineContent';
+import TimelineOppositeContent from '../TimelineOppositeContent';
+import TimelineSeparator from '../TimelineSeparator';
+import TimelineConnector from '../TimelineConnector';
+import TimelineDot from '../TimelineDot';
+import TimelineContext from '../common/context/TimelineContext';
 
 export default {
   title: 'Timeline/Timeline Event',
@@ -13,9 +19,13 @@ export default {
   },
 } as ComponentMeta<typeof TimelineEvent>;
 
-const Template: ComponentStory<typeof TimelineEvent> = (args) => <TimelineEvent {...args} />;
+const Template: ComponentStory<typeof TimelineEvent> = (args: any) => (
+  <TimelineContext.Provider value={{ direction: args.direction || 'vertical' }}>
+    <TimelineEvent {...args} />
+  </TimelineContext.Provider>
+);
 
-export const Default = Template.bind({});
+export const Default = Template.bind<any>({});
 Default.args = ((): TimelineEventProps => {
   const content = (
     <div
@@ -29,8 +39,8 @@ Default.args = ((): TimelineEventProps => {
         `,
       }}
     >
-      <h3 style={{marginBlock: 0}}>Eat</h3>
-      <p style={{marginBlock: 0, marginTop: '1em'}}>Because you need strength</p>
+      <h3 style={{ marginBlock: 0 }}>Eat</h3>
+      <p style={{ marginBlock: 0, marginTop: '1em' }}>Because you need strength</p>
     </div>
   );
 
@@ -48,27 +58,33 @@ Default.args = ((): TimelineEventProps => {
 
   return {
     id: 'default',
-    content,
-    oppositeContent,
-    separator: {
-      dot: {
-        children: <IoFastFoodSharp color="hsl(0, 0%, 98%)" size={24} />,
-        style: {
-          width: 36,
-          height: 36,
-          backgroundColor: 'hsl(0, 0%, 74%)',
-          border: 'none',
-        },
-      },
-      connector: {
-        length: 200,
-      },
-    },
+    index: 0,
+    placement: 'after',
+    separatorContentGap: 16,
+    children: (
+      <React.Fragment>
+        <TimelineContent>{content}</TimelineContent>
+        <TimelineOppositeContent>{oppositeContent}</TimelineOppositeContent>
+        <TimelineSeparator>
+          <TimelineDot
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: 'hsl(0, 0%, 74%)',
+              border: 'none',
+            }}
+          >
+            <IoFastFoodSharp color="hsl(0, 0%, 98%)" size={24} />
+          </TimelineDot>
+          <TimelineConnector length={200} />
+        </TimelineSeparator>
+      </React.Fragment>
+    ),
   };
 })();
 
-export const AlignStart = Template.bind({});
-AlignStart.args = ((): TimelineEventProps => {
+export const PlacedBefore = Template.bind<any>({});
+PlacedBefore.args = ((): TimelineEventProps => {
   const content = (
     <div
       style={{
@@ -82,8 +98,8 @@ AlignStart.args = ((): TimelineEventProps => {
         `,
       }}
     >
-      <h3 style={{marginBlock: 0}}>Eat</h3>
-      <p style={{marginBlock: 0, marginTop: '1em'}}>Because you need strength</p>
+      <h3 style={{ marginBlock: 0 }}>Eat</h3>
+      <p style={{ marginBlock: 0, marginTop: '1em' }}>Because you need strength</p>
     </div>
   );
 
@@ -100,28 +116,32 @@ AlignStart.args = ((): TimelineEventProps => {
 
   return {
     id: 'default',
-    content,
-    oppositeContent,
-    alignSelf: 'before',
-    separator: {
-      dot: {
-        children: <IoFastFoodSharp color="hsl(0, 0%, 98%)" size={24} />,
-        style: {
-          width: 36,
-          height: 36,
-          backgroundColor: 'hsl(0, 0%, 74%)',
-          border: 'none',
-        },
-      },
-      connector: {
-        length: 200,
-      },
-    },
+    index: 0,
+    children: (
+      <React.Fragment>
+        <TimelineContent>{content}</TimelineContent>
+        <TimelineOppositeContent>{oppositeContent}</TimelineOppositeContent>
+        <TimelineSeparator>
+          <TimelineDot
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: 'hsl(0, 0%, 74%)',
+              border: 'none',
+            }}
+          >
+            <IoFastFoodSharp color="hsl(0, 0%, 98%)" size={24} />
+          </TimelineDot>
+          <TimelineConnector length={200} />
+        </TimelineSeparator>
+      </React.Fragment>
+    ),
+    placement: 'before',
   };
 })();
 
-export const Horizontal = Template.bind({});
-Horizontal.args = ((): TimelineEventProps => {
+export const Horizontal = Template.bind<any>({});
+Horizontal.args = (() => {
   const getContent = (text: string): JSX.Element => (
     <p
       style={{
@@ -135,26 +155,30 @@ Horizontal.args = ((): TimelineEventProps => {
 
   return {
     id: 'default',
-    content: getContent('Wake up'),
-    oppositeContent: getContent('9:30 am'),
+    index: 0,
+    placement: 'after',
+    children: (
+      <React.Fragment>
+        <TimelineContent>{getContent('Wake up')}</TimelineContent>
+        <TimelineOppositeContent>{getContent('9:30 am')}</TimelineOppositeContent>
+        <TimelineSeparator>
+          <TimelineDot
+            style={{
+              width: 15,
+              height: 15,
+              backgroundColor: 'hsl(0, 0%, 74%)',
+              border: 'none',
+            }}
+          />
+          <TimelineConnector length={500} />
+        </TimelineSeparator>
+      </React.Fragment>
+    ),
     direction: 'horizontal',
-    separator: {
-      dot: {
-        style: {
-          width: 15,
-          height: 15,
-          backgroundColor: 'hsl(0, 0%, 74%)',
-          border: 'none',
-        },
-      },
-      connector: {
-        length: 200,
-      },
-    },
   };
 })();
 
-export const OnlyOneSide = Template.bind({});
+export const OnlyOneSide = Template.bind<any>({});
 OnlyOneSide.args = ((): TimelineEventProps => {
   const content = (
     <div
@@ -168,28 +192,32 @@ OnlyOneSide.args = ((): TimelineEventProps => {
         `,
       }}
     >
-      <h3 style={{marginBlock: 0}}>Eat</h3>
-      <p style={{marginBlock: 0, marginTop: '1em'}}>Because you need strength</p>
+      <h3 style={{ marginBlock: 0 }}>Eat</h3>
+      <p style={{ marginBlock: 0, marginTop: '1em' }}>Because you need strength</p>
     </div>
   );
 
   return {
     id: 'default',
-    content,
-    oppositeContentFlexValue: '0',
-    separator: {
-      dot: {
-        children: <IoFastFoodSharp color="hsl(0, 0%, 98%)" size={24} />,
-        style: {
-          width: 36,
-          height: 36,
-          backgroundColor: 'hsl(0, 0%, 74%)',
-          border: 'none',
-        },
-      },
-      connector: {
-        length: 200,
-      },
-    },
+    index: 0,
+    placement: 'after',
+    children: (
+      <React.Fragment>
+        <TimelineContent>{content}</TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: 'hsl(0, 0%, 74%)',
+              border: 'none',
+            }}
+          >
+            <IoFastFoodSharp color="hsl(0, 0%, 98%)" size={24} />
+          </TimelineDot>
+          <TimelineConnector length={200} />
+        </TimelineSeparator>
+      </React.Fragment>
+    ),
   };
 })();

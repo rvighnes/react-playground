@@ -1,84 +1,64 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import classNames from "classnames";
 
-import { AlignDirection, Separator, Direction } from "../common/types";
-
-import TimelineDot from "../TimelineDot";
-import TimelineConnector from "../TimelineConnector";
+import { Placement, PlacementWithAlternate } from "../common/types";
+import {getEventPlacement} from "../common/util";
+import TimelineContext from "../common/context/TimelineContext";
+import TimelineEventContext from "../common/context/TimelineEventContext";
 
 const StyledTimelineEvent = styled.li`
   list-style: none;
   display: flex;
+  align-items: stretch;
 
-  // Could be overridden by setting: separator.gaps.content
+  /* Could be overridden by setting the "separatorContentGap" value */
   gap: 15px;
 
-  &:focus {
-    outline: 1px solid blue;
-  }
-
-  .timeline-event__content,
-  .timeline-event__opposite-content {
+  &.timeline-event__opposite-content-placeholder:before {
+    content: "";
     flex: 1;
   }
 
-  .timeline-event__separator {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+  .timeline-event__separator {order: 2;}
 
-    // Could be overridden by setting: separator.gaps.dotAndConnector
-    gap: 5px;
+  &.horizontal {flex-direction: column;}
+  &.vertical {flex-direction: row;}
+
+  &.before {
+    .timeline-event__content {order: 1;}
+
+    .timeline-event__opposite-content {order: 3;}
+    &.timeline-event__opposite-content-placeholder:before {order: 3;}
   }
 
-  .timeline-event__separator--vertical {
-    flex-direction: column;
+  &.after {
+    .timeline-event__content {order: 3;}
+
+    .timeline-event__opposite-content {order: 1;}
+    &.timeline-event__opposite-content-placeholder:before {order: 1;}
   }
 `;
 
 /**
  * Configuration of each individual event in a timeline
  */
-export interface TimelineEventProps {
-  id: string;
-
-  direction?: Direction;
+export interface TimelineEventProps extends React.HTMLProps<HTMLLIElement> {
+  /**
+   * Needed for computing the "placement" when the placement defined in parent
+   * is alternate.
+   */
+  index: number;
 
   /**
-   * Override parent timeline's alignment order for current item.
+   * Override the parent timeline's placement order for current event.
    */
-  alignSelf?: AlignDirection;
+  placement?: Placement;
 
   /**
-   * Overrides parent's separator configuration
+   * Gap between the separator and content/opposite-content
    */
-  separator?: Separator;
-
-  /**
-   * Timeline event content which describes the event.
-   */
-  content: JSX.Element | string;
-
-  /**
-   * Content flex value
-   */
-  contentFlexValue?: React.CSSProperties['flex'];
-
-  /**
-   * This content will appear on the opposite side of the content
-   */
-  oppositeContent?: JSX.Element | string;
-
-  /**
-   * Opposite content flex value
-   */
-  oppositeContentFlexValue?: React.CSSProperties['flex'];
-
-  /**
-   * Click handler for event
-   */
-  clickHandler?: (id: string) => void;
+  separatorContentGap?: React.CSSProperties['gap'];
 }
 
 /**
@@ -87,73 +67,58 @@ export interface TimelineEventProps {
  * @param props {TimelineEventProps}
  * @returns {JSX.Element}
  */
-const TimelineEvent: React.FC<TimelineEventProps> = (props) => {
-  const isDirectionHorizontal = props.direction === "horizontal";
-  const isDirectionVertical = props.direction === "vertical";
+const TimelineEvent = React.forwardRef<HTMLLIElement, TimelineEventProps>((props, ref) => {
+  const {
+    index,
+    className,
+    style = {},
+    separatorContentGap,
+    placement: _placement,
+    ref: _,
+    as: __,   // Conflicts with the HTML element,
+    ...others
+  } = props;
+  const parent = React.useContext(TimelineContext);
+  const [hasOppositeContent, setHasOppositeContent] = React.useState(false);
 
-  const getSeparatorClassNames = (): string => {
-    return classNames([
-      'timeline-event__separator',
-      {'timeline-event__separator--vertical': isDirectionVertical},
-    ]);
-  };
+  const direction = parent.direction;
+  const placement = _placement || getEventPlacement({
+    index: props.index,
+    placement: parent.placement as PlacementWithAlternate,
+    placementStart: parent.placementStart as Placement,
+  });
 
-  const clickHandler = () => {
-    if (props.clickHandler) {
-      props.clickHandler(props.id);
-    }
-  };
-
-  // For accessibility
-  const keyPressHandler: React.KeyboardEventHandler<HTMLLIElement> = (e) => {
-    if (e.key === 'Enter') {
-      clickHandler();
-    }
+  const derivedStyles: React.CSSProperties = {
+    gap: separatorContentGap,
   };
 
   return (
-    <StyledTimelineEvent
-      tabIndex={1}
-      data-testid={`test-${props.id}`}
-      className={'timeline-event'}
-      style={{
-        marginTop: isDirectionVertical ? (props.separator?.gaps?.betweenEvents || 0) : 0,
-        marginLeft: isDirectionHorizontal ? (props.separator?.gaps?.betweenEvents || 0) : 0,
-        flexDirection: `${(isDirectionVertical ? 'row' : 'column')}${props.alignSelf === "after" ? "-reverse" : ""}`,
-        gap: props.separator?.gaps?.content,
-      }}
-      onClick={clickHandler}
-      onKeyPress={keyPressHandler}
+    <TimelineEventContext.Provider
+      value={useMemo(() => ({
+        hasOppositeContent,
+        setHasOppositeContent,
+      }), [hasOppositeContent, setHasOppositeContent])}
     >
-      <div
-        className="timeline-event__content"
-        style={{flex: props.contentFlexValue}}
-      >
-        {props.content}
-      </div>
-      <div
-        className={getSeparatorClassNames()}
-        style={{ gap: props.separator?.gaps?.dotAndConnector }}
-      >
-        <TimelineDot {...props.separator?.dot} />
-        <TimelineConnector
-          direction={props.direction}
-          {...props.separator?.connector}
-        />
-      </div>
-      <div
-        className="timeline-event__opposite-content"
-        style={{flex: props.oppositeContentFlexValue}}
-      >
-        {props.oppositeContent}
-      </div>
+    <StyledTimelineEvent
+      data-testid={`test-${props.id || 'timeline-event'}`}
+      className={classNames([
+        'timeline-event',
+        className || '',
+        placement,
+        direction,
+        {'timeline-event__opposite-content-placeholder': hasOppositeContent === false && parent.showOnlyOneSide === false},
+      ])}
+      style={Object.assign({}, derivedStyles, style)}
+      ref={ref}
+      {...others}
+    >
+      {props.children}
     </StyledTimelineEvent>
+    </TimelineEventContext.Provider>
   );
-};
+});
 
 export default TimelineEvent;
 
 TimelineEvent.defaultProps = {
-  direction: 'vertical',
-  alignSelf: 'after',
 };

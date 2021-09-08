@@ -1,56 +1,58 @@
 import React from "react";
+import styled from "styled-components";
+import classNames from "classnames";
 
-const defaultStyles: React.CSSProperties = {
-  width: 25,
-  height: 25,
-  position: 'relative',
+const StyledDot = styled.div`
+  width: 25px;
+  height: 25px;
+  position: relative;
 
-  backgroundColor: 'hsl(0, 0%, 92%)',
+  background-color: hsl(0, 0%, 90%);
 
-  border: '1px solid hsl(0, 0%, 10%)',
-  borderRadius: '50%',
+  border: 1px solid hsl(0, 0%, 10%);
+  border-radius: 50%;
 
-  overflow: 'hidden',
+  overflow: hidden;
 
-  display: 'grid',
-  placeItems: 'center',
-  cursor: 'auto',
-};
+  flex-shrink: 0;
 
-export interface TimelineDotProps {
-  /**
-   * Optional testId for the dot element
-   */
-  testId?: string;
+  display: grid;
+  place-items: center;
+  cursor: auto;
+`;
 
-  /**
-   * CSS style overrides
-   */
-  style?: React.CSSProperties;
-
-   /**
-    * Content to be shown inside dot
-    */
-  children?: any;
+export interface TimelineDotProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 /**
- * This component is for representing the DOT in the Timeline component.
+ * This component is for representing the DOT in the Timeline component. You can extend
+ * this component via styled-components too.
  *
  * @param props {TimelineDotProps}
  * @returns {JSX.Element}
  */
-const TimelineDot: React.FC<TimelineDotProps> = (props) => {
+const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>((props, ref) => {
+  const {
+    className,
+    ref: _,
+    as: __,   // Conflicts with the HTML element,
+    ...others
+  } = props;
+
   return (
-    <div
-      className="timeline-event__separator-dot"
-      style={Object.assign({}, defaultStyles, props.style)}
-      data-testid={`test-${props.testId || 'timeline-dot'}`}
+    <StyledDot
+      data-testid={`test-${props.id || 'timeline-dot'}`}
+      className={classNames([
+        "timeline-event__separator-dot",
+        className || '',
+      ])}
+      ref={ref}
+      {...others}
     >
       {props.children}
-    </div>
+    </StyledDot>
   );
-};
+});
 
 export default TimelineDot;
 

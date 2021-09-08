@@ -5,10 +5,18 @@ import { GoCheck } from "react-icons/go";
 
 import Timeline from './Timeline';
 
+import TimelineEvent from "./TimelineEvent";
+import TimelineContent from "./TimelineContent";
+import TimelineOppositeContent from "./TimelineOppositeContent";
+import TimelineSeparator from "./TimelineSeparator";
+import TimelineDot from "./TimelineDot";
+import TimelineConnector from "./TimelineConnector";
+
 import { IoFastFoodSharp } from "react-icons/io5";
 import { MdComputer } from "react-icons/md";
 import { FaBed } from "react-icons/fa";
 import { HiOutlineRefresh } from "react-icons/hi";
+import styled from 'styled-components';
 
 export default {
   title: 'Timeline/Timeline',
@@ -28,7 +36,6 @@ const getColoredText = (text: string, color: string, fontWeight: React.CSSProper
       style={{
         marginBlock: 0,
         marginTop: 2,
-        width: 'fit-content',
         fontWeight,
         color,
       }}
@@ -40,143 +47,109 @@ const getColoredText = (text: string, color: string, fontWeight: React.CSSProper
 
 export const Primary = Template.bind({});
 Primary.args = {
-  separator: {
-    gaps: {
-      betweenEvents: 5,
-    },
-    connector: {
-      color: 'hsl(0, 0%, 80%)',
-      length: 50,
-    },
-  },
-  clickHandler: (id) => console.log(id),
-  events: [
-    {
-      id: 'new-version-updates',
-      content: getColoredText('New version updates', 'hsl(200, 90%, 40%)'),
-      separator: {
-        dot: {
-          style: {
-            backgroundColor: 'hsl(200, 90%, 45%)',
-            border: 'none',
-          },
-        },
-      },
-    },
-    {
-      id: 'target-your-app',
-      content: getColoredText('Target your app', 'hsl(193, 45.3%, 37.3%)'),
-      separator: {
-        dot: {
-          style: {
-            backgroundColor: 'hsl(140, 60%, 35%)',
-            border: 'none',
-          },
-          children: <GoCheck color="hsl(0, 100%, 100%)" size={20} />
-        },
-      },
-    },
-    {
-      id: 'appstore-details',
-      content: getColoredText('Appstore Details', 'hsl(193, 45.3%, 37.3%)'),
-      separator: {
-        dot: {
-          style: {
-            backgroundColor: 'hsl(140, 60%, 35%)',
-            border: 'none',
-          },
-          children: <GoCheck color="hsl(0, 100%, 100%)" size={20} />
-        },
-        connector: {
-          type: 'dashed',
-        },
-      },
-    },
-    {
-      id: 'review-and-submit',
-      content: getColoredText('Review and submit', 'hsl(192, 27.1%, 74.7%)'),
-      separator: {
-        dot: {
-          style: {
-            backgroundColor: 'hsl(198, 10.7%, 76.3%)',
-            border: 'none',
-          },
-        },
-        connector: {
-          show: false,
-        },
-      },
-    },
-  ],
+  eventGap: 5,
+  children: (
+    <React.Fragment>
+
+      <TimelineEvent id='new-version-updates' index={0}>
+        <TimelineContent>
+          {getColoredText('New version updates', 'hsl(200, 90%, 40%)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ backgroundColor: 'hsl(200, 90%, 45%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 80%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='target-your-app' index={1}>
+        <TimelineContent>
+          {getColoredText('Target your app', 'hsl(193, 45.3%, 37.3%)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ backgroundColor: 'hsl(140, 60%, 35%)', border: 'none' }}>
+            <GoCheck color="hsl(0, 100%, 100%)" size={20} />
+          </TimelineDot>
+          <TimelineConnector color="hsl(0, 0%, 80%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='appstore-details' index={2}>
+        <TimelineContent>
+          {getColoredText('Appstore Details', 'hsl(193, 45.3%, 37.3%)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ backgroundColor: 'hsl(140, 60%, 35%)', border: 'none' }}>
+            <GoCheck color="hsl(0, 100%, 100%)" size={20} />
+          </TimelineDot>
+          <TimelineConnector color="hsl(0, 0%, 80%)" length={50} type="dashed" />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='review-and-submit' index={3}>
+        <TimelineContent>
+          {getColoredText('Review and submit', 'hsl(192, 27.1%, 74.7%)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ backgroundColor: 'hsl(198, 10.7%, 76.3%)', border: 'none' }} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+    </React.Fragment>
+  ),
 };
 
 export const Horizontal = Template.bind({});
 Horizontal.args = {
   direction: 'horizontal',
-  separator: {
-    gaps: {
-      betweenEvents: 5,
-    },
-    connector: {
-      color: 'hsl(0, 0%, 80%)',
-      length: 200,
-    },
-  },
-  events: [
-    {
-      id: 'new-version-updates',
-      content: getColoredText('New version updates', 'hsl(200, 90%, 40%)'),
-      separator: {
-        dot: {
-          style: {
-            backgroundColor: 'hsl(200, 90%, 45%)',
-            border: 'none',
-          },
-        },
-      },
-    },
-    {
-      id: 'target-your-app',
-      content: getColoredText('Target your app', 'hsl(193, 45.3%, 37.3%)'),
-      separator: {
-        dot: {
-          style: {
-            backgroundColor: 'hsl(140, 60%, 35%)',
-            border: 'none',
-          },
-          children: <GoCheck color="hsl(0, 100%, 100%)" size={20} />
-        },
-      },
-    },
-    {
-      id: 'appstore-details',
-      content: getColoredText('Appstore Details', 'hsl(193, 45.3%, 37.3%)'),
-      separator: {
-        dot: {
-          style: {
-            backgroundColor: 'hsl(140, 60%, 35%)',
-            border: 'none',
-          },
-          children: <GoCheck color="hsl(0, 100%, 100%)" size={20} />
-        },
-      },
-    },
-    {
-      id: 'review-and-submit',
-      content: getColoredText('Review and submit', 'hsl(192, 27.1%, 74.7%)'),
-      separator: {
-        dot: {
-          style: {
-            backgroundColor: 'hsl(198, 10.7%, 76.3%)',
-            border: 'none',
-          },
-        },
-        connector: {
-          show: false,
-        },
-      },
-    },
-  ],
+  eventGap: 5,
+  children: (
+    <React.Fragment>
+
+      <TimelineEvent id='new-version-updates' index={0}>
+        <TimelineContent>
+          {getColoredText('New version updates', 'hsl(200, 90%, 40%)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ backgroundColor: 'hsl(200, 90%, 45%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 80%)" length={200} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='target-your-app' index={1}>
+        <TimelineContent>
+          {getColoredText('Target your app', 'hsl(193, 45.3%, 37.3%)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ backgroundColor: 'hsl(140, 60%, 35%)', border: 'none' }}>
+            <GoCheck color="hsl(0, 100%, 100%)" size={20} />
+          </TimelineDot>
+          <TimelineConnector color="hsl(0, 0%, 80%)" length={200} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='appstore-details' index={2}>
+        <TimelineContent>
+          {getColoredText('Appstore Details', 'hsl(193, 45.3%, 37.3%)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ backgroundColor: 'hsl(140, 60%, 35%)', border: 'none' }}>
+            <GoCheck color="hsl(0, 100%, 100%)" size={20} />
+          </TimelineDot>
+          <TimelineConnector color="hsl(0, 0%, 80%)" length={200} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='review-and-submit' index={3}>
+        <TimelineContent>
+          {getColoredText('Review and submit', 'hsl(192, 27.1%, 74.7%)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ backgroundColor: 'hsl(198, 10.7%, 76.3%)', border: 'none' }} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+    </React.Fragment>
+  ),
 };
 
 const getBasicColoredText = (text: string, color: string, css: React.CSSProperties = {}): JSX.Element => {
@@ -198,318 +171,396 @@ const getBasicColoredText = (text: string, color: string, css: React.CSSProperti
 
 export const Basic = Template.bind({});
 Basic.args = {
-  separator: {
-    gaps: {
-      betweenEvents: 5,
-    },
-    dot: {
-      style: {
-        width: 12,
-        height: 12,
-        backgroundColor: 'hsl(0, 0%, 74%)',
-        border: 'none',
-      },
-    },
-    connector: {
-      color: 'hsl(0, 0%, 74%)',
-      length: 50,
-    },
-  },
-  events: [
-    {
-      id: 'eat',
-      content: getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)'),
-    },
-    {
-      id: 'code',
-      content: getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)'),
-    },
-    {
-      id: 'sleep',
-      content: getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)'),
-      separator: {
-        connector: {
-          show: false,
-        },
-      },
-    },
-  ],
+  eventGap: 5,
+  children: (
+    <React.Fragment>
+
+      <TimelineEvent id='eat' index={0}>
+        <TimelineContent>
+          {getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='code' index={1}>
+        <TimelineContent>
+          {getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='sleep' index={2}>
+        <TimelineContent>
+          {getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+    </React.Fragment>
+  ),
 };
 
-export const AlignBefore = Template.bind({});
-AlignBefore.args = {
-  align: 'before',
-  separator: {
-    gaps: {
-      betweenEvents: 5,
-    },
-    dot: {
-      style: {
-        width: 12,
-        height: 12,
-        backgroundColor: 'hsl(0, 0%, 74%)',
-        border: 'none',
-      },
-    },
-    connector: {
-      color: 'hsl(0, 0%, 74%)',
-      length: 50,
-    },
-  },
-  events: [
-    {
-      id: 'eat',
-      content: getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)', {marginLeft: 'auto'}),
-    },
-    {
-      id: 'code',
-      content: getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)', {marginLeft: 'auto'}),
-    },
-    {
-      id: 'sleep',
-      content: getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)', {marginLeft: 'auto'}),
-    },
-    {
-      id: 'repeat',
-      content: getBasicColoredText('Repeat', 'hsl(0, 0%, 0%, 0.87)', {marginLeft: 'auto'}),
-      separator: {
-        connector: {
-          show: false,
-        },
-      },
-    },
-  ],
+export const PlacedBefore = Template.bind({});
+PlacedBefore.args = {
+  placement: 'before',
+  eventGap: 5,
+  children: (
+    <React.Fragment>
+
+      <TimelineEvent id='eat' index={0}>
+        <TimelineContent>
+          {getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)', { marginLeft: 'auto' })}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='code' index={1}>
+        <TimelineContent>
+          {getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)', { marginLeft: 'auto' })}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='sleep' index={2}>
+        <TimelineContent>
+          {getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)', { marginLeft: 'auto' })}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='repeat' index={3}>
+        <TimelineContent>
+          {getBasicColoredText('Repeat', 'hsl(0, 0%, 0%, 0.87)', { marginLeft: 'auto' })}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+    </React.Fragment>
+  ),
 };
 
 export const AlternatingTimeline = Template.bind({});
 AlternatingTimeline.args = {
-  align: 'alternate',
-  separator: {
-    gaps: {
-      betweenEvents: 5,
-    },
-    dot: {
-      style: {
-        width: 12,
-        height: 12,
-        backgroundColor: 'hsl(0, 0%, 74%)',
-        border: 'none',
-      },
-    },
-    connector: {
-      color: 'hsl(0, 0%, 74%)',
-      length: 50,
-    },
-  },
-  events: [
-    {
-      id: 'eat',
-      content: getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)', {}),
-    },
-    {
-      id: 'code',
-      content: getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)', {marginLeft: 'auto'}),
-    },
-    {
-      id: 'sleep',
-      content: getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)', {}),
-    },
-    {
-      id: 'repeat',
-      content: getBasicColoredText('Repeat', 'hsl(0, 0%, 0%, 0.87)', {marginLeft: 'auto'}),
-      separator: {
-        connector: {
-          show: false,
-        },
-      },
-    },
-  ],
+  placement: 'alternate',
+  eventGap: 5,
+  children: (
+    <React.Fragment>
+
+      <TimelineEvent id='eat' index={0}>
+        <TimelineContent>
+          {getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='code' index={1}>
+        <TimelineContent>
+          {getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)', { marginLeft: 'auto' })}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='sleep' index={2}>
+        <TimelineContent>
+          {getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='repeat' index={3}>
+        <TimelineContent>
+          {getBasicColoredText('Repeat', 'hsl(0, 0%, 0%, 0.87)', { marginLeft: 'auto' })}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+    </React.Fragment>
+  ),
 };
 
 export const OppositeContent = Template.bind({});
 OppositeContent.args = {
-  align: 'alternate',
-  separator: {
-    gaps: {
-      betweenEvents: 5,
-    },
-    dot: {
-      style: {
-        width: 12,
-        height: 12,
-        backgroundColor: 'hsl(0, 0%, 74%)',
-        border: 'none',
-      },
-    },
-    connector: {
-      color: 'hsl(0, 0%, 74%)',
-      length: 50,
-    },
-  },
-  events: [
-    {
-      id: 'eat',
-      content: getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)', {}),
-      oppositeContent: getBasicColoredText('09:30 am', 'hsl(0, 0%, 0%, 0.54)', {marginLeft: 'auto'}),
-    },
-    {
-      id: 'code',
-      content: getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)', {marginLeft: 'auto'}),
-      oppositeContent: getBasicColoredText('10:00 am', 'hsl(0, 0%, 0%, 0.54)', {}),
-    },
-    {
-      id: 'sleep',
-      content: getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)', {}),
-      oppositeContent: getBasicColoredText('12:00 am', 'hsl(0, 0%, 0%, 0.54)', {marginLeft: 'auto'}),
-    },
-    {
-      id: 'repeat',
-      content: getBasicColoredText('Repeat', 'hsl(0, 0%, 0%, 0.87)', {marginLeft: 'auto'}),
-      oppositeContent: getBasicColoredText('09:00 am', 'hsl(0, 0%, 0%, 0.54)', {}),
-      separator: {
-        connector: {
-          show: false,
-        },
-      },
-    },
-  ],
+  placement: 'alternate',
+  eventGap: 5,
+  children: (
+    <React.Fragment>
+
+      <TimelineEvent id='eat' index={0}>
+        <TimelineContent>
+          {getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <TimelineOppositeContent>
+          {getBasicColoredText('09:30 am', 'hsl(0, 0%, 0%, 0.54)', { marginLeft: 'auto' })}
+        </TimelineOppositeContent>
+      </TimelineEvent>
+
+      <TimelineEvent id='code' index={1}>
+        <TimelineContent>
+          {getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)', { marginLeft: 'auto' })}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <TimelineOppositeContent>
+          {getBasicColoredText('10:00 am', 'hsl(0, 0%, 0%, 0.54)', {})}
+        </TimelineOppositeContent>
+      </TimelineEvent>
+
+      <TimelineEvent id='sleep' index={2}>
+        <TimelineContent>
+          {getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <TimelineOppositeContent>
+          {getBasicColoredText('12:00 am', 'hsl(0, 0%, 0%, 0.54)', { marginLeft: 'auto' })}
+        </TimelineOppositeContent>
+      </TimelineEvent>
+
+      <TimelineEvent id='repeat' index={3}>
+        <TimelineContent>
+          {getBasicColoredText('Repeat', 'hsl(0, 0%, 0%, 0.87)', { marginLeft: 'auto' })}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <TimelineOppositeContent>
+          {getBasicColoredText('09:00 am', 'hsl(0, 0%, 0%, 0.54)', {})}
+        </TimelineOppositeContent>
+      </TimelineEvent>
+
+    </React.Fragment>
+  ),
 };
 
-export const Customized = Template.bind({});
-Customized.args = {
-  align: 'alternate',
-  separator: {
-    gaps: {
-      betweenEvents: 5,
-    },
-    dot: {
-      style: {
-        width: 36,
-        height: 36,
-        backgroundColor: 'hsl(0, 0%, 74%)',
-        border: 'none',
-      },
-    },
-    connector: {
-      color: 'hsl(0, 0%, 74%)',
-      length: 50,
-    },
-  },
-  events: [
-    {
-      id: 'eat',
-      content: (
-        <div
-          style={{
-            width: 300,
-            padding: 10,
-            boxShadow: `
+export const SampleCustomization = Template.bind({});
+SampleCustomization.args = {
+  placement: 'alternate',
+  eventGap: 5,
+  children: (
+    <React.Fragment>
+
+      <TimelineEvent id='eat' index={0}>
+        <TimelineContent>
+          <div
+            style={{
+              width: 300,
+              padding: 10,
+              boxShadow: `
               0px 3px 3px -2px rgb(0 0 0 / 20%),
               0px 3px 4px 0px rgb(0 0 0 / 14%),
               0px 1px 8px 0px rgb(0 0 0 / 12%)
             `,
-          }}
-        >
-          <h3 style={{marginBlock: 0}}>Eat</h3>
-          <p style={{marginBlock: 0, marginTop: '1em'}}>Because you need strength</p>
-        </div>
-      ),
-      oppositeContent: getBasicColoredText('09:30 am', 'hsl(0, 0%, 0%, 0.54)', {marginLeft: 'auto', fontSize: 14}),
-      separator: {
-        dot: {
-          children: <IoFastFoodSharp color="hsl(0, 0%, 98%)" size={24} />,
-        },
-      },
-    },
-    {
-      id: 'code',
-      content: (
-        <div
-          style={{
-            width: 300,
-            padding: 10,
-            marginLeft: 'auto',
-            textAlign: 'right',
-            boxShadow: `
+            }}
+          >
+            <h3 style={{ marginBlock: 0 }}>Eat</h3>
+            <p style={{ marginBlock: 0, marginTop: '1em' }}>Because you need strength</p>
+          </div>
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 36, height: 36, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }}>
+            <IoFastFoodSharp color="hsl(0, 0%, 98%)" size={24} />
+          </TimelineDot>
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <TimelineOppositeContent>
+          {getBasicColoredText('09:30 am', 'hsl(0, 0%, 0%, 0.54)', { marginLeft: 'auto', fontSize: 14 })}
+        </TimelineOppositeContent>
+      </TimelineEvent>
+
+      <TimelineEvent id='code' index={1}>
+        <TimelineContent>
+          <div
+            style={{
+              width: 300,
+              padding: 10,
+              marginLeft: 'auto',
+              textAlign: 'right',
+              boxShadow: `
               0px 3px 3px -2px rgb(0 0 0 / 20%),
               0px 3px 4px 0px rgb(0 0 0 / 14%),
               0px 1px 8px 0px rgb(0 0 0 / 12%)
             `,
-          }}
-        >
-          <h3 style={{marginBlock: 0}}>Code</h3>
-          <p style={{marginBlock: 0, marginTop: '1em'}}>Because it's awesome!</p>
-        </div>
-      ),
-      oppositeContent: getBasicColoredText('10:00 am', 'hsl(0, 0%, 0%, 0.54)', {fontSize: 14}),
-      separator: {
-        dot: {
-          children: <MdComputer color="hsl(0, 0%, 98%)" size={24} />,
-          style: {
-            backgroundColor: 'hsl(210, 79%, 46%)',
-          },
-        },
-      },
-    },
-    {
-      id: 'sleep',
-      content: (
-        <div
-          style={{
-            width: 300,
-            padding: 10,
-            boxShadow: `
+            }}
+          >
+            <h3 style={{ marginBlock: 0 }}>Code</h3>
+            <p style={{ marginBlock: 0, marginTop: '1em' }}>Because it's awesome!</p>
+          </div>
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 36, height: 36, backgroundColor: 'hsl(210, 79%, 46%)', border: 'none' }}>
+            <MdComputer color="hsl(0, 0%, 98%)" size={24} />
+          </TimelineDot>
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <TimelineOppositeContent>
+          {getBasicColoredText('10:00 am', 'hsl(0, 0%, 0%, 0.54)', { fontSize: 14 })}
+        </TimelineOppositeContent>
+      </TimelineEvent>
+
+      <TimelineEvent id='sleep' index={2}>
+        <TimelineContent>
+          <div
+            style={{
+              width: 300,
+              padding: 10,
+              boxShadow: `
               0px 3px 3px -2px rgb(0 0 0 / 20%),
               0px 3px 4px 0px rgb(0 0 0 / 14%),
               0px 1px 8px 0px rgb(0 0 0 / 12%)
             `,
-          }}
-        >
-          <h3 style={{marginBlock: 0}}>Sleep</h3>
-          <p style={{marginBlock: 0, marginTop: '1em'}}>Because you need rest</p>
-        </div>
-      ),
-      separator: {
-        dot: {
-          children: <FaBed color="hsl(0, 0%, 0%)" size={24} />,
-          style: {
-            backgroundColor: 'hsl(0, 0%, 100%)',
-            border: '2px solid hsl(210, 79%, 46%)',
-          },
-        },
-      },
-    },
-    {
-      id: 'repeat',
-      content: (
-        <div
-          style={{
-            width: 300,
-            padding: 10,
-            marginLeft: 'auto',
-            textAlign: 'right',
-            boxShadow: `
+            }}
+          >
+            <h3 style={{ marginBlock: 0 }}>Sleep</h3>
+            <p style={{ marginBlock: 0, marginTop: '1em' }}>Because you need rest</p>
+          </div>
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 36, height: 36, backgroundColor: 'hsl(0, 0%, 100%)', border: '2px solid hsl(210, 79%, 46%)' }}>
+            <FaBed color="hsl(0, 0%, 0%)" size={24} />
+          </TimelineDot>
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+      <TimelineEvent id='repeat' index={3}>
+        <TimelineContent>
+          <div
+            style={{
+              width: 300,
+              padding: 10,
+              marginLeft: 'auto',
+              textAlign: 'right',
+              boxShadow: `
               0px 3px 3px -2px rgb(0 0 0 / 20%),
               0px 3px 4px 0px rgb(0 0 0 / 14%),
               0px 1px 8px 0px rgb(0 0 0 / 12%)
             `,
-          }}
-        >
-          <h3 style={{marginBlock: 0}}>Repeat</h3>
-          <p style={{marginBlock: 0, marginTop: '1em'}}>Because this is the life you love!</p>
-        </div>
-      ),
-      separator: {
-        dot: {
-          children: <HiOutlineRefresh color="hsl(0, 0%, 98%)" size={24} />,
-          style: {
-            backgroundColor: 'hsl(339, 100%, 43%)',
-          },
-        },
-        connector: {
-          show: false,
-        },
-      },
-    },
-  ],
+            }}
+          >
+            <h3 style={{ marginBlock: 0 }}>Repeat</h3>
+            <p style={{ marginBlock: 0, marginTop: '1em' }}>Because this is the life you love!</p>
+          </div>
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 36, height: 36, backgroundColor: 'hsl(339, 100%, 43%)', border: 'none' }}>
+            <HiOutlineRefresh color="hsl(0, 0%, 98%)" size={24} />
+          </TimelineDot>
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+      </TimelineEvent>
+
+    </React.Fragment>
+  ),
+};
+
+const StyledTimelineEvent = styled(TimelineEvent)`
+  .timeline-event__opposite-content {
+    max-width: fit-content;
+  }
+`;
+
+const StyledTimelineOppositeContent = styled(TimelineOppositeContent)`
+  /* max-width: fit-content; */
+`;
+
+export const CustomizeOppositeContentSize = Template.bind({});
+CustomizeOppositeContentSize.args = {
+  placement: 'after',
+  eventGap: 5,
+  children: (
+    <React.Fragment>
+
+      <StyledTimelineEvent id='eat' index={0}>
+        <TimelineContent>
+          {getBasicColoredText('Eat', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <StyledTimelineOppositeContent>
+          {getBasicColoredText('09:30 am', 'hsl(0, 0%, 0%, 0.54)', { marginLeft: 'auto' })}
+        </StyledTimelineOppositeContent>
+      </StyledTimelineEvent>
+
+      <StyledTimelineEvent id='code' index={1}>
+        <TimelineContent>
+          {getBasicColoredText('Code', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <StyledTimelineOppositeContent>
+          {getBasicColoredText('10:00 am', 'hsl(0, 0%, 0%, 0.54)', { marginLeft: 'auto' })}
+        </StyledTimelineOppositeContent>
+      </StyledTimelineEvent>
+
+      <StyledTimelineEvent id='sleep' index={2}>
+        <TimelineContent>
+          {getBasicColoredText('Sleep', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <StyledTimelineOppositeContent>
+          {getBasicColoredText('12:00 am', 'hsl(0, 0%, 0%, 0.54)', { marginLeft: 'auto' })}
+        </StyledTimelineOppositeContent>
+      </StyledTimelineEvent>
+
+      <StyledTimelineEvent id='repeat' index={3}>
+        <TimelineContent>
+          {getBasicColoredText('Repeat', 'hsl(0, 0%, 0%, 0.87)')}
+        </TimelineContent>
+        <TimelineSeparator>
+          <TimelineDot style={{ width: 12, height: 12, backgroundColor: 'hsl(0, 0%, 74%)', border: 'none' }} />
+          <TimelineConnector color="hsl(0, 0%, 74%)" length={50} />
+        </TimelineSeparator>
+        <StyledTimelineOppositeContent>
+          {getBasicColoredText('09:00 am', 'hsl(0, 0%, 0%, 0.54)', { marginLeft: 'auto' })}
+        </StyledTimelineOppositeContent>
+      </StyledTimelineEvent>
+
+    </React.Fragment>
+  ),
 };

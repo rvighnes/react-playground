@@ -11,10 +11,7 @@ describe('Timeline component tests', () => {
 
   it('should render the timeline component on the screen', () => {
     render(
-      <Timeline
-        id={id}
-        events={[]}
-      />
+      <Timeline id={id}/>
     );
 
     const el = screen.queryByTestId(`test-${id}`);
@@ -24,11 +21,7 @@ describe('Timeline component tests', () => {
   describe('"timeline-horizontal" class tests', () => {
     const renderAndGet = (isHorizontal: boolean = true): HTMLElement => {
       render(
-        <Timeline
-          id={id}
-          events={[]}
-          direction={isHorizontal ? "horizontal" : "vertical"}
-        />
+        <Timeline id={id} direction={isHorizontal ? "horizontal" : "vertical"} />
       );
 
       return screen.getByTestId(`test-${id}`);
@@ -39,9 +32,19 @@ describe('Timeline component tests', () => {
       expect(el).toHaveClass('timeline-horizontal')
     });
 
+    it('should have the "timeline-vertical" class if the direction is vertical', () => {
+      const el = renderAndGet(false);
+      expect(el).toHaveClass('timeline-vertical')
+    });
+
     it('should not have the "timeline-horizontal" class if the direction is vertical', () => {
       const el = renderAndGet(false);
       expect(el).not.toHaveClass('timeline-horizontal')
+    });
+
+    it('should not have the "timeline-vertical" class if the direction is horizontal', () => {
+      const el = renderAndGet(true);
+      expect(el).not.toHaveClass('timeline-vertical')
     });
   });
 });
