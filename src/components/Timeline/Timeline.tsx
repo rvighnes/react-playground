@@ -43,7 +43,7 @@ export interface TimelineProps extends React.HTMLProps<HTMLUListElement> {
   /**
    * If opposite content is not there, then its space will shrunk to 0.
    */
-  showOnlyOneSide?: boolean;
+  collapseOppositeContentColumn?: boolean;
 }
 
 /**
@@ -57,7 +57,7 @@ const Timeline = React.forwardRef<HTMLUListElement, TimelineProps>((props, ref):
     direction,
     placement,
     placementStart,
-    showOnlyOneSide,
+    collapseOppositeContentColumn,
     className,
     eventGap,
     style = {},
@@ -71,8 +71,8 @@ const Timeline = React.forwardRef<HTMLUListElement, TimelineProps>((props, ref):
     placement,
     placementStart,
     direction,
-    showOnlyOneSide,
-  }), [placement, placementStart, direction, showOnlyOneSide]);
+    showOnlyOneSide: collapseOppositeContentColumn,
+  }), [placement, placementStart, direction, collapseOppositeContentColumn]);
 
   const derivedStyles: React.CSSProperties = {
     gap: eventGap,
@@ -103,5 +103,5 @@ Timeline.defaultProps = {
   placement: 'after' as PlacementWithAlternate,
   placementStart: 'after' as Placement,
   direction: 'vertical' as Direction,
-  showOnlyOneSide: false,
+  collapseOppositeContentColumn: false,
 };
